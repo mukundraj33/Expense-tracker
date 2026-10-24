@@ -19,6 +19,7 @@
         <div class="hero-actions">
             <a href="{{ url_for('register') }}" class="btn-primary">Start tracking free</a>
             <a href="{{ url_for('login') }}" class="btn-ghost">Sign in</a>
+            <a href="#" id="openHowItWorks" class="btn-ghost">See how it works</a>
         </div>
     </div>
     <div class="hero-visual">
@@ -88,5 +89,97 @@
         <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
     </div>
 </section>
+
+<div id="howModal" class="how-modal" hidden>
+    <div class="how-modal-content" role="dialog" aria-modal="true" aria-label="How it works video">
+        <button type="button" class="how-modal-close" aria-label="Close">&times;</button>
+        <div class="how-modal-video">
+            <iframe id="howVideo" src="" title="How it works" frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<style>
+    .how-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background: rgba(0, 0, 0, 0.75);
+    }
+    .how-modal[hidden] { display: none; }
+    .how-modal-content {
+        position: relative;
+        width: min(92vw, 880px);
+        aspect-ratio: 16 / 9;
+        background: #000;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    }
+    .how-modal-video { width: 100%; height: 100%; }
+    .how-modal-video iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .how-modal-close {
+        position: absolute;
+        top: -46px;
+        right: 0;
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 50%;
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+    .how-modal-close:hover { background: #e2e8f0; }
+    body.how-modal-open { overflow: hidden; }
+</style>
+
+{% block scripts %}
+<script>
+(function () {
+    var modal = document.getElementById('howModal');
+    var content = modal.querySelector('.how-modal-content');
+    var iframe = document.getElementById('howVideo');
+    var trigger = document.getElementById('openHowItWorks');
+    var closeBtn = modal.querySelector('.how-modal-close');
+    var videoSrc = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0';
+
+    function openModal() {
+        iframe.src = videoSrc;
+        modal.hidden = false;
+        document.body.classList.add('how-modal-open');
+    }
+
+    function closeModal() {
+        iframe.src = '';
+        modal.hidden = true;
+        document.body.classList.remove('how-modal-open');
+    }
+
+    trigger.addEventListener('click', function (e) {
+        e.preventDefault();
+        openModal();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+    });
+    content.addEventListener('click', function (e) { e.stopPropagation(); });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+})();
+</script>
+{% endblock %}
 
 {% endblock %}
